@@ -1,18 +1,36 @@
+import { useState } from "react";
 import video from "../data/video.js";
+import Controls from "./Controls.js";
+import VideoData from "./VideoData.js";
+import CommentsButton from "./CommentsButton.js";
+import Comments from "./Comments.js";
 
 function App() {
-  console.log("Here's your data:", video);
+  const [votes, setVotes] = useState({
+    up: video.upvotes,
+    down: video.downvotes,
+  });
+
+  const [visibleComments, setVisibleComments] = useState(true);
+
+  function handleVote(isUp = true) {
+    const name = isUp ? "up" : "down";
+    setVotes({ ...votes, [name]: votes[name] + 1 });
+  }
+
+  function handleCommentsVisibility() {
+    setVisibleComments((current) => !current);
+  }
 
   return (
-    <div className="App">
-      <iframe
-        width="919"
-        height="525"
-        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-        frameBorder="0"
-        allowFullScreen
-        title="Thinking in React"
+    <div>
+      <VideoData video={video} />
+      <Controls votes={votes} handleVote={handleVote} />
+      <CommentsButton
+        isVisible={visibleComments}
+        toggleVisibilty={handleCommentsVisibility}
       />
+      {visibleComments ? <Comments comments={video.comments} /> : null}
     </div>
   );
 }
